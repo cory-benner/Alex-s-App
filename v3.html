@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chatty Buddy</title>
+    <style>
+        :root {
+            --bg-color: #fcfbf8;
+            --text-main: #5b553e;
+            --text-light: #555555;
+            
+            /* Card Colors */
+            --color-yellow: #fcd53f;
+            --color-blue: #4f9bf7;
+            --color-green: #89e894;
+            --color-gray: #e2dfd9;
+            
+            /* Floating Dock */
+            --dock-bg: #eceadd;
+            --dock-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Top Navigation / Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Greeting Section */
+        .greeting {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .greeting h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            color: #726b27;
+        }
+
+        .greeting p {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        /* Main 2x2 Grid */
+        .grid-container {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 25px;
+            padding: 0 40px 140px 40px; /* Bottom padding leaves room for the dock */
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .category-card {
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .category-card:active {
+            transform: scale(0.96);
+        }
+
+        .card-icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .category-card h2 {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+        }
+
+        .category-card p {
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        /* Specific Card Styling */
+        .card-need { background-color: var(--color-yellow); color: #5b553e; }
+        .card-feel { background-color: var(--color-blue); color: #ffffff; }
+        .card-people { background-color: var(--color-green); color: #1e5c26; }
+        .card-play { background-color: var(--color-gray); color: #444444; }
+
+        /* Floating Action Dock */
+        .floating-dock {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            background-color: var(--dock-bg);
+            border-radius: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 30px var(--dock-shadow);
+            border: 2px solid #e0ddcd;
+        }
+
+        .dock-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+
+        .dock-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Specific Dock Buttons */
+        .btn-help {
+            background-color: #c92a2a;
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(201, 42, 42, 0.3);
+        }
+
+        .btn-help .asterisk {
+            font-size: 2rem;
+            line-height: 1;
+            margin-bottom: -2px;
+        }
+
+        .btn-chat {
+            font-size: 2.5rem;
+            color: #555;
+            position: absolute;
+            right: 80px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <span>👦</span> Chatty Buddy
+        </div>
+        <div class="settings-icon">⚙️</div>
+    </header>
+
+    <div class="greeting">
+        <h1>Hi [Name]!</h1>
+        <p>Tell me what you need.</p>
+    </div>
+
+    <div class="grid-container">
+        <!-- Card 1: I Need -->
+        <button class="category-card card-need">
+            <div class="card-icon-wrapper">🖐️</div>
+            <h2>I Need</h2>
+            <p>Food • Water • Help</p>
+        </button>
+
+        <!-- Card 2: I Feel -->
+        <button class="category-card card-feel">
+            <div class="card-icon-wrapper">😃</div>
+            <h2>I Feel</h2>
+            <p>Happy • Sad • Hurt</p>
+        </button>
+
+        <!-- Card 3: People/Places -->
+        <button class="category-card card-people">
+            <div class="card-icon-wrapper">👨‍👩‍👧‍👦</div>
+            <h2>People</h2>
+            <p>Mom • Dad • Sister</p>
+        </button>
+
+        <!-- Card 4: Play/Activities -->
+        <button class="category-card card-play">
+            <div class="card-icon-wrapper">🤖</div>
+            <h2>Play</h2>
+            <p>Toys • Sleep • Potty</p>
+        </button>
+    </div>
+
+    <!-- Floating Bottom Dock -->
+    <div class="floating-dock">
+        <!-- Emergency Help Button (Centered) -->
+        <button class="dock-btn btn-help" onclick="window.speechSynthesis.speak(new SpeechSynthesisUtterance('I need help right now.'))">
+            <span class="asterisk">✱</span>
+            HELP
+        </button>
+        
+        <!-- Chat/Speak Icon -->
+        <button class="dock-btn btn-chat">
+            💬
+        </button>
+    </div>
+
+</body>
+</html>
