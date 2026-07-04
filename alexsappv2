@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sentinel AAC</title>
+    <style>
+        :root {
+            --bg: #1e1e2e;
+            --surface: #2a2b3d;
+            --text: #ffffff;
+            --core-bg: #f39c12;
+            --action-bg: #2ecc71;
+            --noun-bg: #3498db;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Top Sentence Strip */
+        .sentence-strip {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 80px;
+            gap: 10px;
+        }
+
+        .sentence-words {
+            flex-grow: 1;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .strip-word {
+            background: #44475a;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .strip-controls button {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .btn-speak { background: var(--action-bg); color: white; }
+        .btn-clear { background: #e74c3c; color: white; }
+
+        /* Main Workspace Split */
+        .workspace {
+            display: flex;
+            flex-grow: 1;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        /* Left: Static Core Vocabulary */
+        .core-panel {
+            width: 30%;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            align-content: start;
+        }
+
+        /* Right: Dynamic Context Panel */
+        .context-panel {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            background: #44475a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--noun-bg);
+        }
+
+        .fringe-grid {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 15px;
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-auto-rows: 140px;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        /* Universal Card Style */
+        .card {
+            border-radius: 16px;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #111;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        
+        .card:active { transform: scale(0.95); }
+        .card .emoji { font-size: 3rem; margin-bottom: 5px; }
+        .card .label { font-size: 1.4rem; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sentence-strip">
+        <div class="sentence-words" id="sentenceDisplay"></div>
+        <div class="strip-controls">
+            <button class="btn-clear" onclick="clearSentence()">❌ Clear</button>
+            <button class="btn-speak" onclick="speakSentence()">🔊 Speak</button>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div class="core-panel" id="coreGrid">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="context-panel">
+            <div class="tabs" id="tabContainer">
+                <!-- Populated by JS -->
+            </div>
+            <div class="fringe-grid" id="fringeGrid">
+                <!-- Populated by JS based on active tab -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // The Vocabulary Database - Easily expandable
+        const aacData = {
+            core: [
+                { id: 'c1', label: 'I', emoji: '🧑', color: '#f39c12' },
+                { id: 'c2', label: 'Want', emoji: '🤲', color: '#2ecc71' },
+                { id: 'c3', label: 'Stop', emoji: '🛑', color: '#e74c3c' },
+                { id: 'c4', label: 'Go', emoji: '🟢', color: '#2ecc71' },
+                { id: 'c5', label: 'More', emoji: '➕', color: '#9b59b6' },
+                { id: 'c6', label: 'Done', emoji: '✅', color: '#e67e22' }
+            ],
+            categories: [
+                {
+                    id: 'cat_food',
+                    title: '🍕 Food',
+                    items: [
+                        { label: 'Milk', emoji: '🥛', color: '#3498db' },
+                        { label: 'Water', emoji: '💧', color: '#3498db' },
+                        { label: 'Apple', emoji: '🍎', color: '#3498db' },
+                        { label: 'Cracker', emoji: '🍘', color: '#3498db' }
+                    ]
+                },
+                {
+                    id: 'cat_play',
+                    title: '🧸 Play',
+                    items: [
+                        { label: 'Blocks', emoji: '🧱', color: '#3498db' },
+                        { label: 'Car', emoji: '🚗', color: '#3498db' },
+                        { label: 'Outside', emoji: '🌳', color: '#3498db' },
+                        { label: 'Tablet', emoji: '📱', color: '#3498db' }
+                    ]
+                },
+                {
+                    id: 'cat_feelings',
+                    title: '😊 Feelings',
+                    items: [
+                        { label: 'Happy', emoji: '😀', color: '#f1c40f' },
+                        { label: 'Sad', emoji: '😢', color: '#f1c40f' },
+                        { label: 'Mad', emoji: '😠', color: '#f1c40f' },
+                        { label: 'Tired', emoji: '🥱', color: '#f1c40f' }
+                    ]
+                }
+            ]
+        };
+
+        let currentSentence = [];
+        let activeCategory = aacData.categories[0].id;
+
+        function init() {
+            renderCore();
+            renderTabs();
+            renderFringe(activeCategory);
+            
+            // Warm up speech synthesis
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+            }
+        }
+
+        function renderCore() {
+            const grid = document.getElementById('coreGrid');
+            aacData.core.forEach(word => {
+                const btn = createCard(word);
+                grid.appendChild(btn);
+            });
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('tabContainer');
+            container.innerHTML = '';
+            aacData.categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${cat.id === activeCategory ? 'active' : ''}`;
+                btn.innerText = cat.title;
+                btn.onclick = () => {
+                    activeCategory = cat.id;
+                    renderTabs();
+                    renderFringe(cat.id);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderFringe(categoryId) {
+            const grid = document.getElementById('fringeGrid');
+            grid.innerHTML = '';
+            const category = aacData.categories.find(c => c.id === categoryId);
+            category.items.forEach(word => {
+                const btn = createCard(word);
+                grid.appendChild(btn);
+            });
+        }
+
+        function createCard(word) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.backgroundColor = word.color;
+            div.innerHTML = `<div class="emoji">${word.emoji}</div><div class="label">${word.label}</div>`;
+            div.onclick = () => addToSentence(word.label, word.emoji);
+            return div;
+        }
+
+        function addToSentence(word, emoji) {
+            // Speak the individual word as they tap it
+            speak(word);
+            
+            currentSentence.push({ word, emoji });
+            updateSentenceDisplay();
+        }
+
+        function updateSentenceDisplay() {
+            const display = document.getElementById('sentenceDisplay');
+            display.innerHTML = '';
+            currentSentence.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'strip-word';
+                div.innerText = `${item.emoji} ${item.word}`;
+                display.appendChild(div);
+            });
+        }
+
+        function clearSentence() {
+            currentSentence = [];
+            updateSentenceDisplay();
+        }
+
+        function speakSentence() {
+            if (currentSentence.length === 0) return;
+            const fullText = currentSentence.map(i => i.word).join(' ');
+            speak(fullText);
+            
+            // Optional: Automatically clear the strip after speaking the full sentence
+            // setTimeout(clearSentence, 1000); 
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
