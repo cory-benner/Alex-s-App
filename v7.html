@@ -40,7 +40,6 @@
 </head>
 <body class="bg-[#fbf9f4] text-on-surface min-h-screen flex flex-col select-none touch-manipulation">
     
-    <!-- TopAppBar -->
     <header id="mainHeader" class="hidden w-full top-0 px-6 pt-8 bg-[#fbf9f4] flex justify-between items-center z-50">
         <div class="flex items-center gap-4">
             <span class="material-symbols-outlined text-primary-container text-4xl">face_6</span>
@@ -51,10 +50,14 @@
         </button>
     </header>
 
-    <!-- Main Content Canvas -->
     <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-8 pb-40">
+
+        <div id="loadingFallback" class="flex flex-col items-center justify-center h-[60vh]">
+            <span class="material-symbols-outlined text-primary-container text-8xl mb-4 animate-pulse">face_6</span>
+            <h2 class="text-3xl font-bold text-on-surface">Loading Buddy...</h2>
+            <p class="text-on-surface-variant mt-4 text-center max-w-md">If you are stuck on this screen, your browser's security settings are blocking the app from reading its local memory.</p>
+        </div>
         
-        <!-- ==================== VIEW 0: SETUP SCREEN ==================== -->
         <div id="setupView" class="hidden max-w-4xl mx-auto bg-surface-container-highest p-8 rounded-[2rem] border-b-[8px] border-outline/20">
             <h2 class="text-4xl font-bold text-on-surface mb-8 text-center">⚙️ Device Setup</h2>
             
@@ -63,12 +66,10 @@
                 <input type="text" id="childNameInput" class="w-full text-2xl p-4 rounded-xl border-2 border-outline/30 focus:border-primary-container outline-none bg-white" placeholder="Enter name...">
             </div>
 
-            <!-- Dynamic Word Builder -->
             <div class="mb-8 bg-white p-6 rounded-2xl shadow-sm">
                 <label class="block text-2xl font-bold text-on-surface mb-4">Add Custom Word & Photo</label>
                 
                 <div class="flex flex-col md:flex-row gap-4 mb-6 items-center">
-                    <!-- Photo Uploader -->
                     <input type="file" id="photoUpload" accept="image/*" class="hidden" onchange="handlePhotoSelect(event)">
                     <label for="photoUpload" id="photoPreviewLabel" class="w-24 h-24 bg-surface-container rounded-full border-4 border-dashed border-outline/30 flex items-center justify-center cursor-pointer hover:bg-outline/10 overflow-hidden shrink-0">
                         <span id="photoPreviewIcon" class="material-symbols-outlined text-4xl text-on-surface-variant">add_a_photo</span>
@@ -76,7 +77,6 @@
                     </label>
 
                     <div class="flex-1 w-full flex flex-col md:flex-row gap-2">
-                        <!-- Category Selector -->
                         <select id="newWordCategory" class="text-xl p-4 rounded-xl border-2 border-outline/30 focus:border-primary-container outline-none bg-surface-container font-bold">
                             <option value="iNeed">🖐️ I Need...</option>
                             <option value="iFeel">😃 I Feel...</option>
@@ -84,17 +84,14 @@
                             <option value="activities">🤖 Activities</option>
                         </select>
 
-                        <!-- Emoji & Label -->
                         <input type="text" id="newWordEmoji" class="w-20 text-center text-3xl p-4 rounded-xl border-2 border-outline/30 focus:border-primary-container outline-none bg-surface-container" placeholder="🍎" title="Fallback Emoji">
                         <input type="text" id="newWordLabel" class="flex-1 text-2xl p-4 rounded-xl border-2 border-outline/30 focus:border-primary-container outline-none bg-surface-container" placeholder="Word (e.g. Drink, Happy...)">
                         <button onclick="addWordToSetup()" class="bg-primary-container text-on-primary-container px-6 py-4 rounded-xl font-bold text-xl active:scale-95 transition-transform border-b-4 border-on-primary-container/20">Add</button>
                     </div>
                 </div>
                 
-                <!-- Setup List Preview (Grouped by Category) -->
                 <div id="setupDictionaryList" class="bg-surface-container p-4 rounded-xl border-2 border-outline/10 h-[400px] overflow-y-auto flex flex-col gap-6">
-                    <!-- Populated via JS -->
-                </div>
+                    </div>
             </div>
 
             <button onclick="saveAndStart()" class="w-full bg-primary-container text-on-primary-container text-3xl font-bold py-6 rounded-2xl border-b-[8px] border-on-primary-container/30 active:scale-95 transition-transform shadow-md">
@@ -102,7 +99,6 @@
             </button>
         </div>
 
-        <!-- ==================== VIEW 1: HOME GRID ==================== -->
         <div id="homeContainer" class="hidden">
             <section class="mb-12 text-center max-w-2xl mx-auto">
                 <h2 id="greetingText" class="text-5xl font-bold text-on-surface mb-4">Hi Buddy!</h2>
@@ -110,7 +106,6 @@
             </section>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- I Need Button -->
                 <button onclick="openCategory('iNeed', 'I Need', 'front_hand', 'text-on-primary-container', 'bg-primary-container')" class="group flex flex-col items-center justify-center min-h-[280px] p-8 rounded-[2.5rem] bg-primary-container border-b-[10px] border-on-primary-container/20 active:scale-95 transition-transform shadow-sm">
                     <div class="w-32 h-32 mb-4 bg-white/40 rounded-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-on-primary-container text-7xl">front_hand</span>
@@ -119,7 +114,6 @@
                     <span id="preview-iNeed" class="text-xl text-on-primary-container/80 line-clamp-1"></span>
                 </button>
                 
-                <!-- I Feel Button -->
                 <button onclick="openCategory('iFeel', 'I Feel', 'mood', 'text-white', 'bg-secondary-container')" class="group flex flex-col items-center justify-center min-h-[280px] p-8 rounded-[2.5rem] bg-secondary-container border-b-[10px] border-secondary-container/50 active:scale-95 transition-transform shadow-sm">
                     <div class="w-32 h-32 mb-4 bg-white/30 rounded-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-white text-7xl">mood</span>
@@ -128,7 +122,6 @@
                     <span id="preview-iFeel" class="text-xl text-white/80 line-clamp-1"></span>
                 </button>
                 
-                <!-- People Button -->
                 <button onclick="openCategory('people', 'People', 'family_history', 'text-on-tertiary-container', 'bg-tertiary-container')" class="group flex flex-col items-center justify-center min-h-[280px] p-8 rounded-[2.5rem] bg-tertiary-container border-b-[10px] border-on-tertiary-container/20 active:scale-95 transition-transform shadow-sm">
                     <div class="w-32 h-32 mb-4 bg-white/40 rounded-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-on-tertiary-container text-7xl">family_history</span>
@@ -137,7 +130,6 @@
                     <span id="preview-people" class="text-xl text-on-tertiary-container/80 line-clamp-1"></span>
                 </button>
                 
-                <!-- Activities Button -->
                 <button onclick="openCategory('activities', 'Activities', 'smart_toy', 'text-on-surface', 'bg-surface-container-highest')" class="group flex flex-col items-center justify-center min-h-[280px] p-8 rounded-[2.5rem] bg-surface-container-highest border-b-[10px] border-outline/20 active:scale-95 transition-transform shadow-sm">
                     <div class="w-32 h-32 mb-4 bg-white/50 rounded-full flex items-center justify-center">
                         <span class="material-symbols-outlined text-on-surface text-7xl">smart_toy</span>
@@ -148,14 +140,12 @@
             </div>
         </div>
 
-        <!-- ==================== VIEW 2: DYNAMIC DRILL-DOWN (Handles all categories) ==================== -->
         <div id="categoryView" class="hidden">
             <div class="flex justify-between items-center mb-10">
                 <button onclick="goHome()" class="flex items-center gap-2 bg-surface-container-highest px-8 py-5 rounded-full border-b-[6px] border-outline/20 active:scale-95 transition-transform shadow-sm">
                     <span class="material-symbols-outlined text-4xl">arrow_back</span>
                     <span class="text-2xl font-bold">Back</span>
                 </button>
-                <!-- Header changes color based on category -->
                 <div id="dynamicCategoryHeader" class="flex items-center gap-3 px-8 py-5 rounded-full border-b-[4px]">
                     <span id="dynamicCategoryIcon" class="material-symbols-outlined text-4xl"></span>
                     <span id="dynamicCategoryTitle" class="text-2xl font-bold"></span>
@@ -163,20 +153,44 @@
             </div>
             
             <div id="dynamicCategoryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <!-- Dynamically populated via JS based on selected category -->
+                </div>
+        </div>
+
+        <div id="quickTypeView" class="hidden">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="goHome()" class="flex items-center gap-2 bg-surface-container-highest px-8 py-5 rounded-full border-b-[6px] border-outline/20 active:scale-95 transition-transform shadow-sm">
+                    <span class="material-symbols-outlined text-4xl">arrow_back</span>
+                    <span class="text-2xl font-bold">Back</span>
+                </button>
+                <div class="flex items-center gap-3 bg-secondary-container px-8 py-5 rounded-full border-b-[4px] border-secondary-container/50">
+                    <span class="material-symbols-outlined text-4xl text-white">keyboard</span>
+                    <span class="text-2xl font-bold text-white">Type to Speak</span>
+                </div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-[2.5rem] border-b-[8px] border-outline/10 shadow-sm flex flex-col gap-6">
+                <textarea id="quickTypeInput" rows="4" class="w-full text-4xl p-6 rounded-3xl border-4 border-outline/20 focus:border-secondary-container outline-none resize-none bg-surface-container-lowest" placeholder="Type a message here..."></textarea>
+                
+                <div class="flex gap-4">
+                    <button onclick="document.getElementById('quickTypeInput').value = ''" class="flex-1 bg-surface-container-highest text-on-surface-variant text-3xl font-bold py-6 rounded-2xl border-b-[6px] border-outline/20 active:scale-95 transition-transform">
+                        Clear
+                    </button>
+                    <button onclick="speakQuickType()" class="flex-[2] bg-secondary-container text-white text-3xl font-bold py-6 rounded-2xl border-b-[6px] border-secondary-container/50 active:scale-95 transition-transform shadow-md flex justify-center items-center gap-3">
+                        <span class="material-symbols-outlined text-4xl">volume_up</span> Speak
+                    </button>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- BottomNavBar -->
     <nav id="bottomNav" class="hidden fixed bottom-0 left-0 w-full z-50 flex justify-center gap-16 items-center px-6 pb-8 pt-4 bg-[#fbf9f4] rounded-t-3xl border-t-2 border-outline/10 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
         <button onclick="speak('Emergency Help!')" class="bg-error text-on-error w-24 h-24 rounded-full flex flex-col items-center justify-center border-b-[8px] border-error/50 active:scale-90 transition-transform shadow-lg relative -top-6">
             <span class="material-symbols-outlined text-5xl">emergency</span>
             <span class="text-sm font-bold mt-1">HELP</span>
         </button>
-        <button class="flex flex-col items-center justify-center text-on-surface-variant w-20 h-20 active:scale-90 transition-transform bg-surface-container-highest rounded-full border-b-[4px] border-outline/20">
-            <span class="material-symbols-outlined text-4xl">chat</span>
+        <button onclick="openQuickType()" class="flex flex-col items-center justify-center text-on-surface-variant w-20 h-20 active:scale-90 transition-transform bg-surface-container-highest rounded-full border-b-[4px] border-outline/20">
+            <span class="material-symbols-outlined text-4xl">keyboard</span>
         </button>
     </nav>
 
@@ -193,7 +207,7 @@
                 ],
                 iFeel: [
                     { id: 5, label: "Happy", emoji: "😃", photoData: null },
-                    { id: 6, "label": "Sad", emoji: "😢", photoData: null },
+                    { id: 6, label: "Sad", emoji: "😢", photoData: null },
                     { id: 7, label: "Hurt", emoji: "🩹", photoData: null }
                 ],
                 people: [
@@ -213,13 +227,11 @@
         let currentTempPhoto = null; 
 
         // DOM Elements
-        const setupView = document.getElementById('setupView');
-        const homeContainer = document.getElementById('homeContainer');
-        const categoryView = document.getElementById('categoryView');
         const mainHeader = document.getElementById('mainHeader');
         const bottomNav = document.getElementById('bottomNav');
         const greetingText = document.getElementById('greetingText');
-        const views = ['homeContainer', 'categoryView', 'setupView'];
+        
+        const views = ['loadingFallback', 'homeContainer', 'categoryView', 'setupView', 'quickTypeView'];
 
         const categoryMeta = {
             iNeed: "I Need",
@@ -228,235 +240,19 @@
             activities: "Activities"
         };
 
-        // --- Initialization ---
+        // --- Safe Initialization ---
         function initApp() {
-            // Using v3 to ensure clean slate from previous code versions
-            const savedData = localStorage.getItem('chattyBuddyData_v3');
-            if (savedData) {
-                appData = JSON.parse(savedData);
-                greetingText.innerText = `Hi ${appData.childName || 'Buddy'}!`;
-                updateHomePreviews();
-                goHome();
-            } else {
-                openSetup();
-            }
-        }
-
-        // --- View Routing ---
-        function switchView(targetViewId) {
-            views.forEach(viewId => document.getElementById(viewId).classList.add('hidden'));
-            document.getElementById(targetViewId).classList.remove('hidden');
-        }
-
-        function goHome() {
-            switchView('homeContainer');
-            mainHeader.classList.remove('hidden');
-            bottomNav.classList.remove('hidden');
-        }
-
-        function openSetup() {
-            switchView('setupView');
-            mainHeader.classList.add('hidden');
-            bottomNav.classList.add('hidden');
-            document.getElementById('childNameInput').value = appData.childName;
-            resetPhotoUpload();
-            renderSetupDictionary();
-        }
-
-        function updateHomePreviews() {
-            Object.keys(appData.categories).forEach(key => {
-                const previewSpan = document.getElementById(`preview-${key}`);
-                if(previewSpan) {
-                    const topItems = appData.categories[key].slice(0, 3).map(item => item.label).join(' • ');
-                    previewSpan.innerText = topItems || "Empty";
-                }
-            });
-        }
-
-        // --- Dynamic Category Rendering ---
-        function openCategory(categoryKey, title, iconName, textClass, bgClass) {
-            speak(title);
-            
-            // Style the header
-            const header = document.getElementById('dynamicCategoryHeader');
-            header.className = `flex items-center gap-3 px-8 py-5 rounded-full border-b-[4px] ${bgClass}`;
-            
-            const icon = document.getElementById('dynamicCategoryIcon');
-            icon.innerText = iconName;
-            icon.className = `material-symbols-outlined text-4xl ${textClass}`;
-
-            const titleEl = document.getElementById('dynamicCategoryTitle');
-            titleEl.innerText = title;
-            titleEl.className = `text-2xl font-bold ${textClass}`;
-
-            // Build Grid
-            const grid = document.getElementById('dynamicCategoryGrid');
-            grid.innerHTML = '';
-
-            appData.categories[categoryKey].forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = 'bg-white flex flex-col items-center justify-center min-h-[240px] p-6 rounded-[2.5rem] border-b-[8px] border-outline/10 active:scale-95 transition-transform shadow-sm';
-                
-                // Construct grammatical sentence based on category
-                let speechPhrase = item.label;
-                if(categoryKey === 'iNeed') speechPhrase = `I need ${item.label}`;
-                if(categoryKey === 'iFeel') speechPhrase = `I feel ${item.label}`;
-                if(categoryKey === 'people') speechPhrase = `I want ${item.label}`;
-                
-                btn.onclick = () => speak(speechPhrase);
-                
-                const visual = item.photoData 
-                    ? `<img src="${item.photoData}" class="w-32 h-32 mb-4 rounded-full object-cover border-4 border-surface-container shadow-sm">` 
-                    : `<span class="text-[6rem] mb-4">${item.emoji}</span>`;
-
-                btn.innerHTML = `
-                    ${visual}
-                    <span class="text-3xl font-bold text-on-surface">${item.label}</span>
-                `;
-                grid.appendChild(btn);
-            });
-
-            switchView('categoryView');
-        }
-
-        // --- Photo Processing (The Auto-Compressor) ---
-        function handlePhotoSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 300; 
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    currentTempPhoto = canvas.toDataURL('image/jpeg', 0.6); 
-                    
-                    document.getElementById('photoPreviewIcon').classList.add('hidden');
-                    const previewImg = document.getElementById('photoPreviewImage');
-                    previewImg.src = currentTempPhoto;
-                    previewImg.classList.remove('hidden');
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-
-        function resetPhotoUpload() {
-            currentTempPhoto = null;
-            document.getElementById('photoUpload').value = '';
-            document.getElementById('photoPreviewIcon').classList.remove('hidden');
-            document.getElementById('photoPreviewImage').classList.add('hidden');
-            document.getElementById('photoPreviewImage').src = '';
-        }
-
-        // --- Setup Logic ---
-        function addWordToSetup() {
-            const catKey = document.getElementById('newWordCategory').value;
-            const labelInput = document.getElementById('newWordLabel');
-            const emojiInput = document.getElementById('newWordEmoji');
-            
-            if (labelInput.value.trim() === '') return;
-
-            appData.categories[catKey].push({
-                id: Date.now(),
-                label: labelInput.value.trim(),
-                emoji: emojiInput.value.trim() || '❓',
-                photoData: currentTempPhoto 
-            });
-
-            labelInput.value = '';
-            emojiInput.value = '';
-            resetPhotoUpload();
-            renderSetupDictionary();
-        }
-
-        function removeWord(categoryKey, id) {
-            appData.categories[categoryKey] = appData.categories[categoryKey].filter(p => p.id !== id);
-            renderSetupDictionary();
-        }
-
-        function renderSetupDictionary() {
-            const list = document.getElementById('setupDictionaryList');
-            list.innerHTML = '';
-            
-            Object.keys(appData.categories).forEach(catKey => {
-                const catWords = appData.categories[catKey];
-                
-                // Section Header
-                const header = document.createElement('h3');
-                header.className = "text-xl font-bold text-on-surface mt-4 border-b-2 border-outline/10 pb-2";
-                header.innerText = categoryMeta[catKey];
-                list.appendChild(header);
-
-                if (catWords.length === 0) {
-                    const empty = document.createElement('div');
-                    empty.className = "text-on-surface-variant italic mb-4";
-                    empty.innerText = "No words added to this category.";
-                    list.appendChild(empty);
-                    return;
+            try {
+                let savedData = null;
+                // Try/Catch block prevents the white screen if local storage is blocked by strict browser policies
+                try {
+                    savedData = localStorage.getItem('chattyBuddyData_v4');
+                } catch (e) {
+                    console.warn("Local storage access denied by browser.", e);
                 }
 
-                // Items list
-                const grid = document.createElement('div');
-                grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4";
-
-                catWords.forEach(word => {
-                    const item = document.createElement('div');
-                    item.className = 'flex justify-between items-center bg-white p-3 rounded-xl border border-outline/10 shadow-sm';
-                    
-                    const visual = word.photoData 
-                        ? `<img src="${word.photoData}" class="w-16 h-16 rounded-full object-cover border-2 border-surface-container">` 
-                        : `<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-3xl">${word.emoji}</div>`;
-
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            ${visual}
-                            <span class="text-2xl font-bold">${word.label}</span>
-                        </div>
-                        <button onclick="removeWord('${catKey}', ${word.id})" class="text-error bg-error/10 w-12 h-12 rounded-full flex items-center justify-center hover:bg-error/20">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    `;
-                    grid.appendChild(item);
-                });
-                
-                list.appendChild(grid);
-            });
-        }
-
-        function saveAndStart() {
-            appData.childName = document.getElementById('childNameInput').value.trim() || "Buddy";
-            localStorage.setItem('chattyBuddyData_v3', JSON.stringify(appData));
-            
-            greetingText.innerText = `Hi ${appData.childName}!`;
-            updateHomePreviews();
-            goHome();
-        }
-
-        // --- Native Speech Synthesis ---
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        window.onload = initApp;
-    </script>
-</body>
-</html>
+                if (savedData) {
+                    appData = JSON.parse(savedData);
+                    greetingText.innerText = `Hi ${appData.childName || 'Buddy'}!`;
+                    updateHomePreviews();
+                    goHome();
