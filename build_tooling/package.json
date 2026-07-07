@@ -1,0 +1,14 @@
+{
+  "name": "chatty-buddy-build-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local build tooling for Chatty Buddy. Compiles the self-hosted Tailwind stylesheet so the app no longer needs the runtime Tailwind CDN. Run 'npm install' once, then 'npm run build:css' whenever the markup or theme changes. Only the COMPILED output in ../public/assets/css ships to the running app; node_modules stays local.",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i tailwind.input.css -o ../public/assets/css/chatty_buddy_styles.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "@tailwindcss/forms": "0.5.10",
+    "@tailwindcss/container-queries": "0.1.1"
+  }
+}

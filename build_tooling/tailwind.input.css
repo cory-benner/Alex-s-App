@@ -1,0 +1,9 @@
+/*
+    Entry stylesheet the Tailwind compiler reads. These three directives expand
+    into Tailwind's reset (base), any component classes, and all the utility
+    classes our markup uses. The compiler writes the finished, minified result to
+    ../assets/css/chatty_buddy_styles.css - that's the file index.html loads.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

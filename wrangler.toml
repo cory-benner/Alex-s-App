@@ -1,0 +1,5 @@
+# Cloudflare Pages: publish the static ./public folder, with no build step.
+# The stylesheet is already compiled and committed, so there is nothing to build.
+# Set `name` to match your actual Pages project.
+name = "alex-s-app"
+pages_build_output_dir = "public"

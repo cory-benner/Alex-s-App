@@ -1,0 +1,57 @@
+/*
+    ============================================================================
+    Chatty Buddy - self-hosted fonts
+    ============================================================================
+    We used to pull our icon font straight from Google's servers on every single
+    page load. Two problems with that: (1) it quietly handed every child's IP
+    address to Google, and (2) if a locked-down network (school, clinic, hospital
+    Wi-Fi) blocked Google, our icons - including the emergency HELP button -
+    turned into empty boxes. So now the font lives right here in our own repo and
+    the app never phones home for it.
+
+    Only ONE font is defined here: Material Symbols Outlined, which draws every
+    icon in the app (settings gear, the HELP siren, the keyboard, delete, etc.).
+
+    NOTE: the old code also loaded Google's "Quicksand" font, but we checked the
+    live page and it was never actually applied to anything - the app was really
+    rendering in the device's system font the whole time. So Quicksand was pure
+    dead weight (a wasted download + a wasted Google call) and we dropped it.
+    Nothing looks different without it. If we ever decide we WANT that rounded
+    Quicksand look, we'll self-host it the same way and wire it onto the <body>.
+
+    This whole file is served from our own origin, so the Content-Security-Policy
+    can keep font-src locked to 'self'.
+    ============================================================================
+*/
+
+/* The Material Symbols icon font - a single variable-weight woff2 we host ourselves. */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 100 700;
+    font-display: block;
+    src: url(../fonts/material_symbols/material_symbols_outlined.woff2) format('woff2');
+}
+
+/*
+    The class every icon <span> uses. Copied verbatim from what Google's stylesheet
+    served us, so the icons render pixel-identically to before - the only change is
+    where the font comes from. (Our Tailwind size utilities like text-4xl / text-7xl
+    load AFTER this file and override the 24px default, which is exactly how the
+    icons got their large size before.)
+*/
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
